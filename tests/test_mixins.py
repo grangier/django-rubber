@@ -59,7 +59,7 @@ class TestMixins(BaseTestCase):
         self.assertDocDoesntExist(token, 'INDEX_2')
 
         # Sync
-        token.es_index(async=True)
+        token.es_index(is_async=True)
         self.assertDocExists(token, 'INDEX_1')
         self.assertDocExists(token, 'INDEX_2')
 
@@ -73,7 +73,7 @@ class TestMixins(BaseTestCase):
         # Async silent fail.
         token.es_index()
         # Sync silent fail.
-        token.es_index(async=False)
+        token.es_index(is_async=False)
         self.assertDocDoesntExist(token, 'INDEX_1')
         self.assertDocDoesntExist(token, 'INDEX_2')
 
@@ -83,7 +83,7 @@ class TestMixins(BaseTestCase):
             token.es_index()
         # Sync hard fail.
         with self.assertRaises(RuntimeError):
-            token.es_index(async=False)
+            token.es_index(is_async=False)
         settings.RUBBER['OPTIONS']['fail_silently'] = True
 
     def test_es_delete(self):
@@ -99,7 +99,7 @@ class TestMixins(BaseTestCase):
         token = Token.objects.create(name='token')
         self.assertDocExists(token, 'INDEX_1')
         self.assertDocExists(token, 'INDEX_2')
-        token.es_delete(async=False)
+        token.es_delete(is_async=False)
         self.assertDocDoesntExist(token, 'INDEX_1')
         self.assertDocDoesntExist(token, 'INDEX_2')
 
@@ -107,11 +107,11 @@ class TestMixins(BaseTestCase):
         token.es_delete()
 
         # Sync soft fail.
-        token.es_delete(async=False)
+        token.es_delete(is_async=False)
 
         # Async hard fail.
         settings.RUBBER['OPTIONS']['fail_silently'] = False
-        token.es_delete(async=False)
+        token.es_delete(is_async=False)
         settings.RUBBER['OPTIONS']['fail_silently'] = True
 
     def test_save(self):

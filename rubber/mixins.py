@@ -94,11 +94,11 @@ class ESIndexableMixin(object):
             })
         return u"\n".join([json.dumps(request) for request in requests])
 
-    def es_index(self, async=True, countdown=0):
+    def es_index(self, is_async=True, countdown=0):
         if rubber_config.is_disabled or not self.is_indexable():
             return
         content_type = ContentType.objects.get_for_model(self)
-        if async:
+        if is_async:
             es_index_object.apply_async(
                 args=(content_type.pk, self.pk,),
                 countdown=countdown,
@@ -110,11 +110,11 @@ class ESIndexableMixin(object):
             else:
                 es_index_object.run(content_type.pk, self.pk)
 
-    def es_delete(self, async=True):
+    def es_delete(self, is_async=True):
         if rubber_config.is_disabled:
             return
         body = self.get_es_delete_body()
-        if async:
+        if is_async:
             es_bulk.apply_async(
                 args=(body,),
                 queue=rubber_config.celery_queue
