@@ -62,7 +62,7 @@ class ESIndexableMixin(object):
 
     def get_es_index_body(self):
         requests = []
-        for _, indexer in self.get_es_indexers().iteritems():
+        for _, indexer in iter(self.get_es_indexers()).items():
             index, doc_type, version = self.get_es_indexer_meta(indexer)
             requests.append({
                 'index': {
@@ -83,7 +83,7 @@ class ESIndexableMixin(object):
 
     def get_es_delete_body(self):
         requests = []
-        for _, indexer in self.get_es_indexers().iteritems():
+        for _, indexer in iter(self.get_es_indexers().items()):
             index, doc_type, version = self.get_es_indexer_meta(indexer)
             requests.append({
                 'delete': {
