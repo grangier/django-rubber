@@ -75,7 +75,7 @@ class ESIndexableMixin(object):
                 doc = indexer['dsl_doc_type_mapping']()
                 requests.append(doc)
             else:
-                body = indexer['serializer'](self).data
+                body = indexer['serializer'](self, context={'request': None}).data
                 requests.append(body)
         return u"\n".join([
             dsl_serializer.dumps(request) for request in requests
