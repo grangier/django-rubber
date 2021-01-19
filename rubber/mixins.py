@@ -36,7 +36,7 @@ class ESIndexableMixin(object):
     def get_es_indexer_meta(self, indexer):
         version = indexer.get('version')
         if 'dsl_doc_type' in indexer:
-            index = indexer['dsl_doc_type']._doc_type.index
+            index = indexer['dsl_doc_type']._index._name
             doc_type = indexer['dsl_doc_type']._doc_type.name
         else:
             index = indexer['index']
@@ -52,7 +52,6 @@ class ESIndexableMixin(object):
         index, doc_type, version = self.get_es_indexer_meta(indexer)
         result = rubber_config.es.get(
             index=index,
-            doc_type=doc_type,
             id=self.pk,
             ignore=404
         )
@@ -67,7 +66,6 @@ class ESIndexableMixin(object):
             requests.append({
                 'index': {
                     '_index': index,
-                    '_type': doc_type,
                     '_id': self.pk
                 }
             })
@@ -88,7 +86,6 @@ class ESIndexableMixin(object):
             requests.append({
                 'delete': {
                     '_index': index,
-                    '_type': doc_type,
                     '_id': self.pk
                 }
             })

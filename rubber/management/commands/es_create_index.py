@@ -8,12 +8,30 @@ from rubber.management.base import ESBaseCommand
 
 
 class Command(ESBaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument('indexes',
+            action='store',
+            type=str,
+            nargs='*',
+            help=(
+                "List of indexes names to create"
+            )
+        )
+        parser.add_argument('--dry-run',
+            action='store_true',
+            dest='dry_run',
+            default=False,
+            help=(
+                "Run the command in dry run mode without actually changing "
+                "anything."
+            )
+        )
 
     def run(self, *args, **options):
-        if len(args) == 0:
+        if len(options['indexes']) == 0:
             self.print_error("Please provide at least one index.")
             sys.exit(1)
-        for index in args:
+        for index in options['indexes']:
             config_path = os.path.join(
                 self.rubber_config.config_root,
                 '{0}.json'.format(index)

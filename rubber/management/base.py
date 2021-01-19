@@ -15,9 +15,9 @@ from rubber import get_rubber_config
 
 class ESBaseCommand(BaseCommand):
     required_options = []
-    option_list = BaseCommand.option_list + (
-        make_option(
-            '--dry-run',
+
+    def add_arguments(self, parser):
+        parser.add_argument('--dry-run',
             action='store_true',
             dest='dry_run',
             default=False,
@@ -25,8 +25,7 @@ class ESBaseCommand(BaseCommand):
                 "Run the command in dry run mode without actually changing "
                 "anything."
             )
-        ),
-    )
+        )
 
     def handle(self, *args, **options):
         self.rubber_config = get_rubber_config()

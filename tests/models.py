@@ -3,20 +3,22 @@ Models for rubber tests.
 """
 from django.db import models
 
-from elasticsearch_dsl import DocType
-from elasticsearch_dsl import String
+from elasticsearch_dsl import Document
+from elasticsearch_dsl import Text
 
 from rubber.mixins import ESIndexableMixin
 
 
-class TokenDocType(DocType):
-    name = String()
-    number = String()
-    multi = String(multi=True)
+class TokenDocType(Document):
+    name = Text()
+    number = Text()
+    multi = Text(multi=True)
 
     class Meta:
         doc_type = 'token'
-        index = 'index_2'
+
+    class Index:
+        name = 'index_2'
 
 
 class TokenSerializer(object):
