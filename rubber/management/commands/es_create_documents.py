@@ -14,35 +14,40 @@ from rubber.management.base import ESBaseCommand
 
 
 class Command(ESBaseCommand):
-    option_list = ESBaseCommand.option_list + (
-        make_option(
-            '--show-tqdm',
+    def add_arguments(self, parser):
+        parser.add_argument('--dry-run',
+            action='store_true',
+            dest='dry_run',
+            default=False,
+            help=(
+                "Run the command in dry run mode without actually changing "
+                "anything."
+            )
+        )
+        parser.add_argument('--show-tqdm',
             action='store_true',
             dest='show_tqdm',
             default=False,
             help="Show tqdm progress bar."
-        ),
-        make_option(
-            '--from',
+        )
+        parser.add_argument('--from',
             action='store',
-            type='string',
+            type=str,
             dest='from_date',
             help=(
                 "Filter queryset by date. "
                 "Must be formatted as YYYY-MM-DDTHH:MM:SS."
             )
-        ),
-        make_option(
-            '--models',
+        )
+        parser.add_argument('--models',
             action='store',
-            type='string',
+            type=str,
             dest='models',
             help=(
                 "Comma separated list of models to be indexed. It must match "
                 "at least one of the models defined in RUBBER settings."
             )
-        ),
-    )
+        )
 
     def get_models_paths(self):
         if not self.models:
