@@ -99,7 +99,7 @@ class ESIndexableMixin(object):
                     '_id': self.pk
                 }
             })
-        return u"\n".join([json.dumps(request) for request in requests], cls=EnhancedJsonEncoder)
+        return u"\n".join([json.dumps(request, cls=EnhancedJsonEncoder) for request in requests])
 
     def es_index(self, is_async=True, countdown=0):
         if rubber_config.is_disabled or not self.is_indexable():
