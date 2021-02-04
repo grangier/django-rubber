@@ -10,3 +10,4 @@ eggs/
 logs/
 parts/
 ve/
+.*
