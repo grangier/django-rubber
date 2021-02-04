@@ -3,6 +3,8 @@
 *~
 bin/
 cover/
+build/
+test/
 develop-eggs/
 dist/
 django_rubber.egg-info/
