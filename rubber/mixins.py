@@ -3,6 +3,8 @@ Mixins for rubber.
 """
 import logging
 import json
+from uuid import UUID
+
 
 from django.contrib.contenttypes.models import ContentType
 
@@ -14,6 +16,14 @@ from rubber.tasks import es_index_object
 
 logger = logging.getLogger(__name__)
 rubber_config = get_rubber_config()
+
+
+class EnhancedJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, UUID):
+            return str(obj)
+        # Let the base class default method raise the TypeError
+        return json.JSONEncoder.default(self, obj)
 
 
 class ESIndexableMixin(object):
@@ -89,7 +99,7 @@ class ESIndexableMixin(object):
                     '_id': self.pk
                 }
             })
-        return u"\n".join([json.dumps(request) for request in requests])
+        return u"\n".join([json.dumps(request) for request in requests], cls=EnhancedJsonEncoder)
 
     def es_index(self, is_async=True, countdown=0):
         if rubber_config.is_disabled or not self.is_indexable():
