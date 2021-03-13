@@ -37,6 +37,9 @@ class ESIndexableMixin(object):
     def get_indexable_queryset(cls):
         return cls._default_manager.all()
 
+    def get_es_pk(self):
+        return self.pk
+
     def get_es_indexers(self):
         return self.es_indexers
 
@@ -76,7 +79,7 @@ class ESIndexableMixin(object):
             requests.append({
                 'index': {
                     '_index': index,
-                    '_id': self.pk
+                    '_id': self.get_es_pk()
                 }
             })
             if 'dsl_doc_type' in indexer:
@@ -96,7 +99,7 @@ class ESIndexableMixin(object):
             requests.append({
                 'delete': {
                     '_index': index,
-                    '_id': self.pk
+                    '_id': self.get_es_pk()
                 }
             })
         return u"\n".join([json.dumps(request, cls=EnhancedJsonEncoder) for request in requests])
