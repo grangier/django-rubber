@@ -37,7 +37,7 @@ DEFAULT_RUBBER = {
 
 def recursive_update(d, u):
     for k, v in six.iteritems(u):
-        if isinstance(v, collections.Mapping):
+        if isinstance(v, collections.abc.Mapping):
             r = recursive_update(d.get(k, {}), v)
             d[k] = r
         else:
