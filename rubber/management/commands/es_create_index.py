@@ -36,7 +36,7 @@ class Command(ESBaseCommand):
                 self.rubber_config.config_root,
                 '{0}.json'.format(index)
             )
-            self.print_info(u"Using config file : {0}".format(config_path))
+            self.print_info("Using config file : {0}".format(config_path))
             body = None
             try:
                 with open(config_path, 'r') as f:
@@ -45,4 +45,4 @@ class Command(ESBaseCommand):
                 self.print_error("Config file does not exist.")
                 continue
             self.rubber_config.es.indices.create(index=index, body=body)
-            self.print_success(u"Index {0} created.".format(index))
+            self.print_success("Index {0} created.".format(index))

@@ -47,19 +47,17 @@ class ESIndexableMixin(object):
         version = indexer.get('version')
         if 'dsl_doc_type' in indexer:
             index = indexer['dsl_doc_type']._index._name
-            doc_type = indexer['dsl_doc_type']._doc_type.name
         else:
             index = indexer['index']
-            doc_type = indexer['doc_type']
         if version is not None:
             index = '{0}_v{1}'.format(index, version)
-        return (index, doc_type, version)
+        return (index, version)
 
     def get_es_doc(self, indexer_key):
         if not self.pk:
             return None
         indexer = self.get_es_indexers()[indexer_key]
-        index, doc_type, version = self.get_es_indexer_meta(indexer)
+        index, version = self.get_es_indexer_meta(indexer)
         result = rubber_config.es.get(
             index=index,
             id=self.pk,
@@ -70,9 +68,11 @@ class ESIndexableMixin(object):
         return result
 
     def get_es_index_body(self):
+        if not self.pk:
+            return None
         requests = []
-        for _, indexer in iter(self.get_es_indexers().items()):
-            index, doc_type, version = self.get_es_indexer_meta(indexer)
+        for _, indexer in self.get_es_indexers().items():
+            index, version = self.get_es_indexer_meta(indexer)
             requests.append({
                 'index': {
                     '_index': index,
@@ -85,21 +85,21 @@ class ESIndexableMixin(object):
             else:
                 body = indexer['serializer'](self, context={'request': None}).data
                 requests.append(body)
-        return u"\n".join([
+        return "\n".join([
             dsl_serializer.dumps(request) for request in requests
         ])
 
     def get_es_delete_body(self):
         requests = []
-        for _, indexer in iter(self.get_es_indexers().items()):
-            index, doc_type, version = self.get_es_indexer_meta(indexer)
+        for _, indexer in self.get_es_indexers().items():
+            index, version = self.get_es_indexer_meta(indexer)
             requests.append({
                 'delete': {
                     '_index': index,
                     '_id': self.pk
                 }
             })
-        return u"\n".join([json.dumps(request, cls=EnhancedJsonEncoder) for request in requests])
+        return "\n".join([json.dumps(request, cls=EnhancedJsonEncoder) for request in requests])
 
     def es_index(self, is_async=True, countdown=0):
         if rubber_config.is_disabled or not self.is_indexable():

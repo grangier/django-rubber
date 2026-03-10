@@ -2,7 +2,6 @@
 Management command for rubber.
 """
 from datetime import datetime
-from optparse import make_option
 import concurrent.futures as futures
 import sys
 
@@ -71,21 +70,20 @@ class Command(ESBaseCommand):
             sys.exit(1)
         else:
             return from_date
-        return None
 
     def run(self, *args, **options):
         from_date = self.get_from_date()
         if from_date is not None:
-            self.print_info(u"Reference date : {0}".format(from_date))
+            self.print_info("Reference date : {0}".format(from_date))
 
         models_paths = self.get_models_paths()
         indexable_models = self.rubber_config.get_models_from_paths(
             models_paths)
-        self.print_info(u"Models : {0}".format(indexable_models))
+        self.print_info("Models : {0}".format(indexable_models))
 
         for model in indexable_models:
             self.print_success(
-                u"Indexing model: '{0}'.".format(model.__name__))
+                "Indexing model: '{0}'.".format(model.__name__))
             queryset = model.get_indexable_queryset()
 
             if from_date is not None and model.es_reference_date is not None:
@@ -115,7 +113,7 @@ class Command(ESBaseCommand):
                     if self.show_tqdm:
                         pbar.update(1)
                 try:
-                    body = u"\n".join(requests)
+                    body = "\n".join(requests)
                     if not self.dry_run:
                         self.rubber_config.es.bulk(body=body)
                 except Exception as exc:

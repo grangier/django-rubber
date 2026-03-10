@@ -14,9 +14,6 @@ class TokenDocType(Document):
     number = Text()
     multi = Text(multi=True)
 
-    class Meta:
-        doc_type = 'token'
-
     class Index:
         name = 'index_2'
 
@@ -42,7 +39,7 @@ class Token(ESIndexableMixin, models.Model):
     name = models.CharField(default='token', max_length=200)
     number = models.IntegerField(default=42)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_es_indexers(self):
@@ -51,7 +48,6 @@ class Token(ESIndexableMixin, models.Model):
                 'version': 1,
                 'index': 'index_1',
                 'serializer': TokenSerializer,
-                'doc_type': 'token'
             },
             'INDEX_2': {
                 'version': 1,

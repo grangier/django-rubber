@@ -1,12 +1,8 @@
 """
 Base management command for rubber.
 """
-from __future__ import print_function
-from optparse import make_option
 import sys
 import traceback
-
-import six
 
 from django.core.management.base import BaseCommand
 
@@ -45,7 +41,7 @@ class ESBaseCommand(BaseCommand):
                     required_option))
                 sys.exit(1)
 
-        for key, value in six.iteritems(options):
+        for key, value in options.items():
             setattr(self, key, value)
 
         try:
@@ -70,12 +66,9 @@ class ESBaseCommand(BaseCommand):
     def confirm(self, message):  # pragma: no cover
         if self.yes:
             return True
-        message += u" [Y/n]"
+        message += " [Y/n]"
         self.print_warning(message)
-        try:
-            choice = raw_input()
-        except NameError:
-            choice = input()
+        choice = input()
         if choice != 'Y':
             self.print_error("Operation canceled.")
             sys.exit(1)
@@ -86,17 +79,17 @@ class ESBaseCommand(BaseCommand):
 
     def print_info(self, message, verbosity=1):
         if self.verbosity >= verbosity:
-            print(u"{0}{1}{2}".format(self.BLUE, message, self.RESET))
+            print("{0}{1}{2}".format(self.BLUE, message, self.RESET))
 
     def print_success(self, message, verbosity=1):
         if self.verbosity >= verbosity:
-            print(u"{0}{1}{2}".format(self.GREEN, message, self.RESET))
+            print("{0}{1}{2}".format(self.GREEN, message, self.RESET))
 
     def print_error(self, message):
         print(
-            u"{0}{1}{2}".format(self.RED, message, self.RESET),
+            "{0}{1}{2}".format(self.RED, message, self.RESET),
             file=sys.stderr
         )
 
     def print_warning(self, message):  # pragma: no cover
-        print(u"{0}{1}{2}".format(self.YELLOW, message, self.RESET))
+        print("{0}{1}{2}".format(self.YELLOW, message, self.RESET))

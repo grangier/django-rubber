@@ -20,10 +20,10 @@ def es_bulk(body, fail_silently=None):
         fail_silently = rubber_config.should_fail_silently
     try:
         rubber_config.es.bulk(body=body)
-    except:
+    except Exception:
         if fail_silently:
             logger.error(
-                "Exception occured in es_bulk.",
+                "Exception occurred in es_bulk.",
                 exc_info=True,
                 extra={'body': body}
             )
@@ -41,10 +41,10 @@ def es_index_object(content_type_id, object_id, fail_silently=None):
         if not obj.is_indexable():
             return
         rubber_config.es.bulk(body=obj.get_es_index_body())
-    except:
+    except Exception:
         if fail_silently:
             logger.error(
-                "Exception occured while indexing object.",
+                "Exception occurred while indexing object.",
                 exc_info=True,
                 extra={
                     'content_type_id': content_type_id,
