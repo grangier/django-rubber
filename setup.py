@@ -1,8 +1,6 @@
 """
 Setup for rubber.
 """
-import sys
-
 from setuptools import find_packages
 from setuptools import setup
 
@@ -12,11 +10,8 @@ install_requires = [
     'elasticsearch',
     'elasticsearch-dsl',
     'celery',
-    'six',
     'tqdm',
 ]
-if sys.version_info.major == 2:
-    install_requires.append('futures')
 
 setup(
     name='django-rubber',

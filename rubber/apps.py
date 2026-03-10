@@ -1,11 +1,10 @@
 """
 App config for rubber.
 """
+from collections.abc import Mapping
 from copy import deepcopy
-import collections
 
 import logging
-import six
 
 from elasticsearch import Elasticsearch
 
@@ -17,10 +16,7 @@ from django.db.models.signals import post_save
 
 logger = logging.getLogger(__name__)
 
-try:
-    from django.apps import AppConfig
-except ImportError:
-    AppConfig = object
+from django.apps import AppConfig
 
 
 DEFAULT_RUBBER = {
@@ -36,8 +32,8 @@ DEFAULT_RUBBER = {
 
 
 def recursive_update(d, u):
-    for k, v in six.iteritems(u):
-        if isinstance(v, collections.Mapping):
+    for k, v in u.items():
+        if isinstance(v, Mapping):
             r = recursive_update(d.get(k, {}), v)
             d[k] = r
         else:
@@ -63,7 +59,13 @@ def post_save_es_index(sender, instance, **kwargs):
 
 
 def post_delete_es_delete(sender, instance, **kwargs):
-    instance.es_delete()
+    try:
+        instance.es_delete()
+    except Exception:
+        logger.error(
+            "Exception occurred in post_delete_es_delete.",
+            exc_info=True
+        )
 
 
 def class_prepared_check_indexable(sender, **kwargs):
@@ -94,7 +96,7 @@ class RubberConfig(AppConfig):
 
     def __init__(self, *args, **kwargs):
         class_prepared.connect(class_prepared_check_indexable)
-        super(RubberConfig, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def ready(self):
         self._es = Elasticsearch(hosts=self.hosts)
@@ -147,16 +149,6 @@ class RubberConfig(AppConfig):
     def config_root(self):
         return self.settings['CONFIG_ROOT']
 
-try:
-    # Try to import AppConfig to check if this feature is available.
-    from django.apps import AppConfig  # noqa
-except ImportError:
-    app_config = RubberConfig()
-    app_config.ready()
-
-    def get_rubber_config():
-        return app_config
-else:
-    def get_rubber_config():
-        from django.apps import apps
-        return apps.get_app_config('rubber')
+def get_rubber_config():
+    from django.apps import apps
+    return apps.get_app_config('rubber')
